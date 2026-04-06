@@ -18,17 +18,22 @@ jobs:
       with:
         python-version: '3.8'
 
-    - name: 强制安装依赖库 (直接安装，无需 requirements.txt)
+    - name: 安装依赖库
       run: |
         python -m pip install --upgrade pip
         pip install matplotlib pyinstaller
 
-    - name: 使用 PyInstaller 打包 (使用 python -m 调用防报错)
+    - name: 安装 UPX (用于压缩体积)
       run: |
-        python -m PyInstaller -F -w BDtool.py
+        choco install upx  # GitHub 的 Windows 环境内置了 choco 包管理器
+
+    - name: 使用 PyInstaller + UPX 打包
+      run: |
+        # PyInstaller 会自动寻找系统路径中的 upx.exe 进行压缩
+        python -m PyInstaller -F -w -i logo.ico BDtool.py
 
     - name: 上传生成的 EXE 文件
       uses: actions/upload-artifact@v4
       with:
-        name: BD_Evidence_Tool_Compatible
+        name: BD_Evidence_Tool_Compressed
         path: dist/*.exe
