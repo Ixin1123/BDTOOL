@@ -25,7 +25,7 @@ jobs:
 
     - name: 使用 PyInstaller 打包
       run: |
-        pyinstaller -F -w beidou_tool.py
+        pyinstaller -F -w BDtool.py
 
     - name: 上传生成的 EXE 文件
       uses: actions/upload-artifact@v3
