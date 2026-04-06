@@ -2,33 +2,33 @@ name: 打包 Windows EXE
 
 on:
   push:
-    branches: [ "main" ]  # 当你上传代码到 main 分支时自动触发
-  workflow_dispatch:      # 允许手动触发打包
+    branches: [ "main" ]  
+  workflow_dispatch:      
 
 jobs:
   build:
-    runs-on: windows-latest  # 使用 Windows 服务器运行
+    runs-on: windows-latest  
 
     steps:
     - name: 检出代码
-      uses: actions/checkout@v4  # 已升级到 v4
+      uses: actions/checkout@v4
 
     - name: 设置 Python 3.8
-      uses: actions/setup-python@v5  # 已升级到 v5
+      uses: actions/setup-python@v5
       with:
         python-version: '3.8'
 
-    - name: 安装依赖库
+    - name: 强制安装依赖库 (直接安装，无需 requirements.txt)
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install matplotlib pyinstaller
 
-    - name: 使用 PyInstaller 打包
+    - name: 使用 PyInstaller 打包 (使用 python -m 调用防报错)
       run: |
-        pyinstaller -F -w BDtool.py
+        python -m PyInstaller -F -w BDtool.py
 
     - name: 上传生成的 EXE 文件
-      uses: actions/upload-artifact@v4  # 核心修复：已升级到 v4
+      uses: actions/upload-artifact@v4
       with:
-        name: Beidou_Tool_Win7_Compatible
+        name: BD_Evidence_Tool_Compatible
         path: dist/*.exe
