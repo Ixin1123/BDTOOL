@@ -73,16 +73,15 @@ class BeidouSmartEvidence:
             target_time = ""
             label = ""
 
-            # --- 核心逻辑分支 ---
+            # --- 逻辑优化：全兼容前缀检索失败时刻 ---
             if t_input:
-                # 场景一：手动输入时间 -> 执行定位成功功能
                 target_time = t_input
                 label = "定位成功"
             else:
-                # 场景二：未输入时间 -> 自动找寻“定位失败(V)”的报文并取中
                 fail_times = []
                 for l in lines:
-                    if "$GNRMC" in l and ",V," in l:
+                    # 关键修改：不再判断 $GN/$BD，只要包含 RMC 且状态为 V (无效定位)
+                    if "RMC" in l.upper() and ",V," in l.upper():
                         parts = l.split(',')
                         if len(parts) > 1 and parts[1]:
                             time_val = parts[1].split('.')[0]
@@ -97,8 +96,13 @@ class BeidouSmartEvidence:
                 target_time = fail_times[len(fail_times) // 2] if len(fail_times) >= 3 else fail_times[0]
                 label = "定位失败"
 
-            # 根据确定的时刻提取报文区间 (RMC到GGA之间)
-            indices = [i for i, l in enumerate(lines) if target_time in l and ("$GNRMC" in l or "$GNGGA" in l)]
+            # --- 逻辑优化：全兼容提取包含目标时间的所有 GGA/RMC 报文 ---
+            indices = []
+            for i, l in enumerate(lines):
+                upper_l = l.upper()
+                # 只要这一行包含目标时间戳，并且是定位核心报文 (不论是 $GN/$BD/$GB 开头)
+                if target_time in upper_l and ("RMC" in upper_l or "GGA" in upper_l):
+                    indices.append(i)
 
             if not indices:
                 messagebox.showerror("失败", f"未找到时刻 {target_time} 的核心定位报文")
@@ -153,7 +157,7 @@ class BeidouSmartEvidence:
         plt.savefig(img_save_path, bbox_inches='tight', dpi=150, pad_inches=0.1, facecolor='white')
         plt.close()
 
-        messagebox.showinfo("完成", f"已生成取证截图：\n{img_save_path}")
+        messagebox.showinfo("完成", f"已生成定点报文截图：\n{img_save_path}")
 
 
 if __name__ == "__main__":
