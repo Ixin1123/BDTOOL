@@ -11,10 +11,10 @@ jobs:
 
     steps:
     - name: 检出代码
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4  # 已升级到 v4
 
-    - name: 设置 Python 3.8  # 关键：强制使用 3.8 版本以兼容 Win7
-      uses: actions/setup-python@v4
+    - name: 设置 Python 3.8
+      uses: actions/setup-python@v5  # 已升级到 v5
       with:
         python-version: '3.8'
 
@@ -28,7 +28,7 @@ jobs:
         pyinstaller -F -w BDtool.py
 
     - name: 上传生成的 EXE 文件
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4  # 核心修复：已升级到 v4
       with:
-        name: Beidou_Tool_Win7_Compatible  # 下载时的压缩包名字
-        path: dist/*.exe                    # 打包出来的文件路径
+        name: Beidou_Tool_Win7_Compatible
+        path: dist/*.exe
