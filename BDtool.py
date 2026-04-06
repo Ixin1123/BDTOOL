@@ -44,7 +44,7 @@ class BeidouSmartEvidence:
         self.entry_time.pack()
 
         # 3. 执行按钮
-        tk.Button(root, text="生成取证截图", command=self.process,
+        tk.Button(root, text="生成报文截图", command=self.process,
                   bg="#1a1a1a", fg="white", font=('微软雅黑', 10, 'bold'), width=25).pack(pady=20)
 
     def select_file(self):
