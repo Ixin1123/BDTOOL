@@ -90,7 +90,7 @@ class BeidouSmartEvidence:
             # --- 逻辑优化：全兼容前缀检索失败时刻 ---
             if t_input:
                 target_time = t_input
-                label = "定位成功"
+                label = "定位正常"
             else:
                 fail_times = []
                 for l in lines:
@@ -103,12 +103,12 @@ class BeidouSmartEvidence:
                                 fail_times.append(time_val)
 
                 if not fail_times:
-                    messagebox.showerror("错误", "日志中未发现任何‘定位失败(V)’的状态报文！")
+                    messagebox.showerror("错误", "日志中未发现任何‘定位异常(V)’的状态报文！")
                     return
 
                 # 自动挑选中间时刻
                 target_time = fail_times[len(fail_times) // 2] if len(fail_times) >= 3 else fail_times[0]
-                label = "定位失败"
+                label = "定位异常"
 
             # --- 逻辑优化：全兼容提取包含目标时间的所有 GGA/RMC 报文 ---
             indices = []
