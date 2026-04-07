@@ -3,24 +3,38 @@ from tkinter import filedialog, messagebox
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import os
+import sys
 
+# --- 第一重保险：全局设置 matplotlib 默认中文字体 ---
+# 按照黑体、微软雅黑、宋体的顺序自动寻找系统里有的字体
+plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'SimSun', 'FangSong'] 
+plt.rcParams['axes.unicode_minus'] = False # 正常显示负号
 
-# --- 物理路径加载字体，彻底解决中文乱码 ---
+# --- 资源路径处理（用于打包 EXE 后正确加载图标） ---
+def get_resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
+# --- 第二重保险：物理路径加载字体（扩充了 Win7 常用的后缀） ---
 def get_chinese_font_prop():
     font_paths = [
-        "C:/Windows/Fonts/msyh.ttc",  # 微软雅黑
-        "C:/Windows/Fonts/msyh.ttf",
+        "C:/Windows/Fonts/msyh.ttc",    # Win10/11 微软雅黑
+        "C:/Windows/Fonts/msyh.ttf",    # Win7 微软雅黑
         "C:/Windows/Fonts/simhei.ttf",  # 黑体
+        "C:/Windows/Fonts/SIMHEI.TTF",  # 黑体大写兼容
         "C:/Windows/Fonts/simsun.ttc",  # 宋体
+        "C:/Windows/Fonts/simsun.ttf",  # Win7 宋体
+        "C:/Windows/Fonts/simfang.ttf"  # 仿宋
     ]
     for path in font_paths:
         if os.path.exists(path):
             return fm.FontProperties(fname=path, size=11)
-    return fm.FontProperties(family='sans-serif', size=11)
-
+            
+    # 如果物理路径还是全军覆没，通过 family 名称直接调用黑体
+    return fm.FontProperties(family='SimHei', size=11)
 
 CH_FONT_PROP = get_chinese_font_prop()
-
 
 class BeidouSmartEvidence:
     def __init__(self, root):
