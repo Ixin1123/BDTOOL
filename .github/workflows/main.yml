@@ -30,7 +30,7 @@ jobs:
     - name: 使用 PyInstaller + UPX 打包
       run: |
         # PyInstaller 会自动寻找系统路径中的 upx.exe 进行压缩
-        python -m PyInstaller -F -w BDtool.py
+        python -m PyInstaller -F -w -i "logo.ico" BDtool.py BDtool.py
 
     - name: 上传生成的 EXE 文件
       uses: actions/upload-artifact@v4
